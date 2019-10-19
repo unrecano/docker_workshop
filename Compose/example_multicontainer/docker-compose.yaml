@@ -1,0 +1,26 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: secret
+  api:
+    build: ${PWD}
+    command: "pipenv run python main.py"
+    volumes:
+      - ${PWD}:/code
+    ports:
+      - "8002:8002"
+    environment:
+      DB_URI: postgresql://postgres:secret@db/postgres
+    depends_on:
+      - db
+  pg_admin:
+    image: dpage/pgadmin4
+    ports:
+      - "8001:80"
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_DEFAULT_EMAIL: admin@local.local
+    depends_on:
+      - db
